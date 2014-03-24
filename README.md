@@ -24,7 +24,7 @@ Example Playbook
 ```yaml
 - hosts: quickbooks_servers
   roles:
-   - { role:  quickbooks-ansible }
+   - { role: QuickBooks-ansible }
 ```
 
 License
