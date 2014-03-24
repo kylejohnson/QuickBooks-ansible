@@ -1,6 +1,8 @@
 QuickBooks
 ========
 
+[![Build Status](https://travis-ci.org/kylejohnson/QuickBooks-ansible.png)](https://travis-ci.org/kylejohnson/QuickBooks-ansible)
+
 An Ansible role for installing QuickBooks on a CentOS machine.
 
 Requirements
