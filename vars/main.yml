@@ -1,0 +1,5 @@
+---
+qb_user_name: qb
+qb_user_pass: qb
+qb_data_directory: /home/qb/qbdata
+qb_host_name: qbsrv01

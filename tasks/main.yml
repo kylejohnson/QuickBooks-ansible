@@ -1,0 +1,56 @@
+---
+- name: Set the hostname
+  hostname: name={{ qb_host_name }}
+
+- name: Create the qb user
+  user: name={{ qb_user_name }} comment="QuickBooks Server User"
+
+- name: Install prerequisite packages
+  yum: name={{ item }} state=present
+  with_items:
+    - gamin.i686
+    - glibc.i686
+    - libstdc++.i686
+    - samba
+    - samba-common
+
+- name: Create the qbdata directory
+  file: path={{ qb_data_directory }} owner={{ qb_user_name }} group={{ qb_user_name }} state=directory
+  notify:
+    - restart samba
+    - restart qbdbfilemon
+    - restart qbdbmgrn_24
+
+- name: Install the quickbooks server rpm
+  yum: name=http://http-download.intuit.com/http.intuit/CMO/qbes/resources/qbdbm-24.0-1.i386.rpm
+       state=present
+
+- name: Point qbmonitord to the right directory
+  template: src=qbmonitord.conf dest=/opt/qb/util/qbmonitord.conf
+            owner=root group=root mode=0644
+  notify:
+    - restart qbdbfilemon
+    - restart qbdbmgrn_24
+
+- name: Copy over the samba config
+  template: src=smb.conf dest=/etc/samba/smb.conf
+            owner=root group=root mode=0644
+            validate='/usr/bin/testparm -s %s'
+  notify:
+    - restart samba
+
+- name: Create the samba user
+  shell: (echo {{ qb_user_pass }}; echo {{ qb_user_pass }} ) | smbpasswd -a -s {{ qb_user_name }}
+         creates=/var/lib/samba/private/secrets.tdb
+  sudo: yes
+  notify:
+    - restart samba
+
+- name: Start qbdbfilemon
+  service: name=qbdbfilemon state=started enabled=yes
+
+- name: Start qbdbmgrn_24
+  service: name=qbdbmgrn_24 state=started enabled=yes
+
+- name: Start samba
+  service: name=smb state=started enabled=yes

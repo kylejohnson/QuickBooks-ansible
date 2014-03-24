@@ -1,0 +1,9 @@
+---
+- name: restart samba
+  service: name=smb state=restarted
+
+- name: restart qbdbfilemon
+  service: name=qbdbfilemon state=restarted
+
+- name: restart qbdbmgrn_24
+  service: name=qbdbmgrn_2 state=restarted
